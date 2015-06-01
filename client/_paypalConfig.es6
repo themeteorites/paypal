@@ -2,11 +2,11 @@ function cb(e, r){
     console.log(e || r);
 }
 
-Template.adminConfig.onCreated(function(){
+Template._paypalConfig.onCreated(function(){
     this.subscribe('paypal-config');
 });
 
-Template.adminConfig.helpers({
+Template._paypalConfig.helpers({
     config(){
         if(!Template.instance().subscriptionsReady()){ return PayPal.config.find(); }
 
@@ -23,7 +23,7 @@ Template.adminConfig.helpers({
 });
 
 
-Template.adminConfig.events({
+Template._paypalConfig.events({
     'click input[type=\'radio\']'(e, t){
         var self = this, configId = self._id, targetMode = e.currentTarget.value;
 
