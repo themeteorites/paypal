@@ -1,15 +1,18 @@
 function goTo(url){
+
     // Go to approval_url
     return window.location.href = url;
 }
 
-function errorCB(error){
-    console.error(error);
-}
-
 Template._paypalButton.events({
-    'click button': function(){
-        var self = this;
+    'click button.paypal-button': function(event, template){
+        var button, cachedMsg, error, self = this, msg = 'loading...', className = event.currentTarget.className;
+
+        button = template.$('.' + className);
+
+        cachedMsg = button.text();
+
+        button.text(msg);
 
         var product = {
             name: self.name,
@@ -28,6 +31,11 @@ Template._paypalButton.events({
         console.dir(product);
         console.groupEnd();
 
-        PayPal.create(product).then(goTo).catch(errorCB);
+        error = function(){
+            button.text(cachedMsg);
+            errorCB
+        };
+
+        PayPal.create(product).then(goTo).catch(error);
     }
 });
