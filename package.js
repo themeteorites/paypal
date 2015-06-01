@@ -23,14 +23,14 @@ Package.onUse(function(api) {
 
     /* Dependencies */
 
-    api.use(['templating', 'underscore', 'reactive-var', 'mongo', 'audit-argument-checks', 'check', 'themeteorites:payments', 'mquandalle:jade@0.4.3', 'grigio:babel']);
+    api.use(['templating', 'underscore', 'accounts-password', 'reactive-var', 'mongo', 'audit-argument-checks', 'check', 'themeteorites:payments', 'mquandalle:jade@0.4.3', 'grigio:babel']);
 
     api.use(['aldeed:collection2', 'aldeed:autoform']);
 
     // Client
     clientFiles.push(path.join(tplPath, '_paypalButton.tpl.jade'));
-    clientFiles.push(path.join(tplPath, 'adminConfig.tpl.jade'));
-    clientFiles.push(path.join(clientPath, 'adminConfig.es6'));
+    clientFiles.push(path.join(tplPath, '_paypalConfig.tpl.jade'));
+    clientFiles.push(path.join(clientPath, '_paypalConfig.es6'));
     clientFiles.push(path.join(clientPath, 'paypal-client.es6'));
     clientFiles.push(path.join(clientPath, '_paypalButton.es6'));
 
