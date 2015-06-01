@@ -1,12 +1,14 @@
 ###How To Start
 
-    meteor add themeteorites:paypal
+Since this and the `payments` package are not published to atmosphere at this time, you must `git clone` both this and the [payments package](https://github.com/themeteorites/payments) manually
+
+~~~meteor add themeteorites:paypal~~~
 
 ####Configure
 
-Set up your PayPal configuration (client_id, client_secret, and mode)
+Set up your PayPal configuration (client_id, client_secret, and mode) in one of the following two ways
 
-######Store Your Config In A Collection
+######Option 1: Store Your Config In A Collection
 1. Add the `{{ > adminConfig }}` template which provides an insert form to store your information in the PayPal collection
 
 2. On the server set:
@@ -14,7 +16,7 @@ Set up your PayPal configuration (client_id, client_secret, and mode)
 
 Or if you don't want to store your information in a collection, the recommended route is to store it in a .json file. Make sure you do not commit your sensitive info into git!
 
-######Add Your Config via settings.json
+######Option 2: Add Your Config via settings.json
 
 ```json
 {
@@ -80,9 +82,16 @@ amount.total
 
 #The Following Is A Work-In-Progress
 
-####Set Up Your validatePurchaseAttemp
+####Set Up Your validatePurchaseAttempt
 
-Stuff
+You must return a truthy value to allow processing of the payment
+
+```javascript
+PayPal.validatePurchaseAttempt = function(){
+
+    return true;
+};
+```
 
 
 ####Set Up Your OnSuccess/onError Hooks
