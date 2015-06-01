@@ -1,0 +1,39 @@
+//- Rename file to something package-specific i.e. paypalAdminConfig
+
+h1 Admin Panel for PayPal
+
++quickForm collection="PayPal.config" id="insertConfigForm" type="method" meteormethod="paypal-new-config"
+
+each config
+  div
+    h3 Config Info:
+    h5 Config id: {{ _id }}
+    p
+    | Mode:  {{ mode }}
+    | Client Id: {{ client_id }}
+    | Client Secret: {{ client_secret }}
+
+    p Redirect Urls: 
+      p return url: 
+        b {{ redirect_urls.return_url }}
+      p cancel url:
+        b {{ redirect_urls.cancel_url }}
+
+    p
+      label Client Id:
+      input(type="text" id="pp-client-id" name="client-id" value=client_id)
+      label Client Secret:
+      input(type="text" id="pp-client-secret" name="client-secret" value=client_secret)
+
+    p
+      label Return url:
+      input(type="text" id="pp-return-url" name="return-url" value=redirect_urls.return_url)
+      label Cancel url:
+      input(type="text" id="pp-cancel-url" name="cancel-url" value=redirect_urls.cancel_url)
+
+    form
+      label(for="pp-sandbox") Sandbox
+      input(type="radio" id="pp-sandbox" name="pp-config-type" value='sandbox' $dyn=sandbox)
+
+      label(for="pp-live") Live
+      input(type="radio" id="pp-live" name="pp-config-type" value='live' $dyn=live )

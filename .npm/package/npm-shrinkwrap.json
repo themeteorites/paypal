@@ -1,0 +1,15 @@
+{
+  "dependencies": {
+    "paypal-rest-sdk": {
+      "version": "1.5.3",
+      "dependencies": {
+        "buffer-crc32": {
+          "version": "0.2.5"
+        },
+        "node-uuid": {
+          "version": "1.4.3"
+        }
+      }
+    }
+  }
+}
