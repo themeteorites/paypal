@@ -121,9 +121,10 @@ PayPal.onPaymentSuccess(function(order){
     // Returns true on client
     // Returns order object on the server
 });
+```
 
 ####Set Up onPaymentFailure
-
+```javascript
 PayPal.onPaymentFailure(function(order, errorMsg){
     // Do stuff here on failure processing of payment
     // Returns order object on the server
