@@ -31,16 +31,38 @@ getURLParameter = function(name){
   return decodeURIComponent((new RegExp('[?|&]' + name + '=' + '([^&;]+?)(&|#|;|$)').exec(location.search)||[,""])[1].replace(/\+/g, '%20'))||null;
 };
 
-function cb(e, r){
-    console.log(e || r);
-}
+result = function(r){
+    console.log(r);
+};
+
+errorCB = function(err){
+    console.error(err);
+};
+
+PayPal.configure = function(obj){
+    if(obj){
+        PayPal.configuration = obj;
+        return PayPal.configuration;
+    }
+
+    return PayPal.configuration;
+};
 
 if(Meteor.isClient){
     // User Defined Function
-    // PayPal.configure = function(configId){
-    //     // console.log(self.configure);
-    //     Meteor.call('paypal-configure', self.configure, cb);
-    // };
+    // PayPal.configure({
+    //     mode: 'sandbox',
+    //     client_id: 'sandbox',
+    //     client_secret: 'sandbox',
+    //     redirect_urls: {
+    //         return_url: 'http://localhost:3000/return',
+    //         cancel_url: 'http://localhost:3000/cancel'
+    //     }
+    // });
+    // 
+    // PayPal.validateProcessAttempt(function(){
+    //     return true;
+    // });
 
     PayPal.create = function(product){
         return new Promise(function(resolve, reject){
@@ -74,22 +96,53 @@ if(Meteor.isClient){
             });
         });
     };
+
+    PayPal.getConfig = function(){
+        return new Promise(function(resolve, reject){
+            Meteor.call('paypal-redirect-urls', function(e, r){
+                if(e){
+                    return reject(e);
+                }
+                else{
+                    return resolve(r);
+                }
+            })
+        });
+    };
+
+    PayPal.setConfigById = function(configId){
+        return new Promise(function(resolve, reject){
+            Meteor.call('paypal-set-config', configId, function(e, r){
+                if(e){
+                    return reject(e);
+                }
+                else{
+                    return resolve(r);
+                }
+            })
+        });
+    };
 }
 
 if(Meteor.isServer){
-    // User Defined function
-    // PayPal.validateProcessAttempt = function(){
-    //     // TODO: Decide what argument(s) to pass in
+    PayPal.validateProcessAttempt = function(cb){
+        if(!cb){ return PayPal._validateProcessAttempt; }
 
-    //     // return a falsy or truthy value
-    // };
-
-
-    PayPal._onSuccess = function(){
-        console.log('Do something after payment succeeds');
-    };
-
-    PayPal._onError = function(){
-        console.log('Do something after payment fails');
+        PayPal._validateProcessAttemp = cb;
+        // return a falsy or truthy value
     };
 }
+
+PayPal.onPaymentSuccess = function(cb){
+    if(!cb){ return PayPal._onPaymentSuccess; }
+    PayPal._onPaymentSuccess = cb;
+};
+
+PayPal.onPaymentFailure = function(cb){
+    if(!cb){ return PayPal._onPaymentError; }
+    PayPal._onPaymentError = cb;
+};
+
+// Stubs
+PayPal._onPaymentError = function(){};
+PayPal._onPaymentSuccess = function(){};
