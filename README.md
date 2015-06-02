@@ -6,40 +6,54 @@ Since this and the `payments` package are not published to atmosphere at this ti
 
 ####Configure
 
-Set up your PayPal configuration (client_id, client_secret, and mode) in one of the following two ways
+Set up your PayPal configuration (client_id, client_secret, and mode)
 
-######Option 1: Store Your Config In A Collection
-1. Add the `{{ > adminConfig }}` template which provides an insert form to store your information in the PayPal collection
+######Option 1 (Hard Code It)
 
-2. On the server set:
-    PayPal.configId = 'Your _id of the document you inserted from the form in the previous step'
-
-Or if you don't want to store your information in a collection, the recommended route is to store it in a .json file. Make sure you do not commit your sensitive info into git!
-
-######Option 2: Add Your Config via settings.json
-
-```json
-{
-    "paypal": {
-        "mode": "sandbox",
-        "client_id": "4ifuRqsFoeeaj5ibv",
-        "client_secret": "fPkrnUxGIOfUkT6BFj2K4h3PEAMSf8ongCrDjnOz6Oq"
-    },
-    "public": {
-        "paypal": {
-            "redirect_urls": {
-                "return_url": "http://localhost:3000/return",
-                "cancel_url": "http://localhost:3000/cancel"
-            }
-        }
+On the server:
+```javascript
+PayPal.configure({
+    mode: 'sandbox',
+    client_id: '12345abcd',
+    client_secret: '12345abcd',
+    redirect_urls: {
+        return_url: 'myapp.com/return',
+        cancel_url: 'myapp.com/cancel'
     }
-}
+});
 ```
+
+######Option 2 (Setup via Collections)
+
+Add the template `{{ > _paypalConfig }}`
+
+It renders an insert form for your PayPal configuration
+
+On that template insert your settings and click `Set`
+
+If you go this route you need to hit `Set` on every server startup, so you may want to either hard-code the settings document:
+
+```javascript
+PayPal.configure(PayPal.config.findOne());
+```
+
+or use the settings.json method below. 
+
+
+######Option 3 (Add via .json)
+**Recommended**
+
+On the server:
+```javascript
+PayPal.configure(Meteor.settings.paypal);
+```
+
+*Recommended
 
 ####Set Up Your Product Info
 You need to setup your product info like so
 
-home.html
+`home.html`
 
 ```html
 <template name="home">
@@ -48,7 +62,7 @@ home.html
 ```
 
 
-home.js
+`home.js`
 
 ```javascript
 Template.home.helpers({
@@ -67,6 +81,7 @@ Template.home.helpers({
 });
 ```
 
+Required properties for product info:
 ```
 name
 sku
@@ -78,43 +93,54 @@ amount
 amount.currency
 amount.total
 ```
-^ Are required properties for your product
 
-#The Following Is A Work-In-Progress
+####Set Up validateProcessAttempt
 
-####Set Up Your validatePurchaseAttempt
-
-You must return a truthy value to allow processing of the payment
+You can stop the payment process by returning a falsy value or by throwing an exception
 
 ```javascript
-PayPal.validatePurchaseAttempt = function(){
-
-    return true;
-};
+PayPal.validateProcessAttempt(function(options){
+    return stopPayment();
+});
 ```
 
+`options` returns:
 
-####Set Up Your OnSuccess/onError Hooks
+```javascript
+payerId
+paymentId
+```
+
+####Set Up Your OnPaymentSuccess
 
 On the server declare an expression
 
 ```javascript
-PayPal.onSuccess = function(order){
+PayPal.onPaymentSuccess(function(order){
     // Do stuff here on successful processing of payment
-};
+    // Returns true on client
+    // Returns order object on the server
+});
 
-PayPal.onError = function(order){
+####Set Up onPaymentFailure
+
+PayPal.onPaymentFailure(function(order, errorMsg){
     // Do stuff here on failure processing of payment
-};
+    // Returns order object on the server
+});
 ```
 
 `order` returns the following properties:
 
 ```javascript
-state   =>  State of the payment
+state
 sku
 time
 provider
 action
 httpStatusCode
 ```
+
+##Payments
+
+Payments get reported to the `Payments` collection, and you can view them by adding the `{{ > _paymentStatus }}` template
