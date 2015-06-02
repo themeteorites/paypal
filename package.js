@@ -25,7 +25,7 @@ Package.onUse(function(api) {
 
     api.use(['templating', 'underscore', 'accounts-password', 'reactive-var', 'mongo', 'audit-argument-checks', 'check', 'themeteorites:payments', 'mquandalle:jade@0.4.3', 'grigio:babel']);
 
-    api.use(['aldeed:collection2', 'aldeed:autoform']);
+    api.use(['aldeed:collection2', 'aldeed:autoform@5.3.0']);
 
     // Client
     clientFiles.push(path.join(tplPath, '_paypalButton.tpl.jade'));
