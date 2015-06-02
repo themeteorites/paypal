@@ -12,7 +12,7 @@ Template._paypalConfig.helpers({
         var self = this, mode = self.mode;
         return mode === 'sandbox' ? 'checked' : null;
     },
-    live(mode){
+    live(){
         var self = this, mode = self.mode;
         return mode === 'live' ? 'checked' : null;
     }
